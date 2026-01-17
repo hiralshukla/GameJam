@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
-using System;
 
 public class MansionRouter : MonoBehaviour
 {
@@ -9,74 +8,139 @@ public class MansionRouter : MonoBehaviour
     public string startRoomId = "Start";
     public string ballroomRoomId = "Ballroom";
 
-    string[] randomizeRooms = { "Kitchen", "Basement", "Lounge", "GameRoom", "Theater", "Conservatory", "Patio" };
-    string[] stableRooms = {};
+    // Rooms that get shuffled into the remaining cells (besides Start/Ballroom)
+    [Header("Room Pools")]
+    [SerializeField]
+    private string[] randomizeRooms =
+        { "Kitchen", "Basement", "Lounge", "GameRoom", "Theater", "Conservatory", "Patio" };
+
+    // Rooms that should NOT move once placed (optional)
+    [SerializeField] private string[] stableRooms = { };
+
+    // 3x3 grid. We store room indices (ints) internally; -1 means empty.
+    [Header("Grid")]
     public int[,] gameMap = new int[3, 3];
 
-    private Dictionary<(string, Direction), string> doorMap = new Dictionary<(string, Direction), string>();
-    private Dictionary<string, Vector2Int> roomPositions = new Dictionary<string, Vector2Int>();
-    private HashSet<string> anchoredRooms = new HashSet<string>();
-    private List<string> indexToRoomId = new List<string>();
-    private Dictionary<string, int> roomIdToIndex = new Dictionary<string, int>();
+    [Header("Torch anchoring")]
+    [SerializeField] private int maxTorchesPerRoom = 4;
+
+    [Header("References")]
+    [Tooltip("Assign your RoomLoader here so MansionRouter can detect the current room and torch states.")]
+    [SerializeField] private RoomLoader roomLoader;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugPrintOnStart = true;
+    [SerializeField] private bool debugPrintOnReshuffle = true;
+
+    // (roomId, exitDirection) -> destinationRoomId
+    private readonly Dictionary<(string, Direction), string> doorMap = new();
+
+    // roomId -> (row,col)
+    private readonly Dictionary<string, Vector2Int> roomPositions = new();
+
+    // rooms that never move once anchored
+    private readonly HashSet<string> anchoredRooms = new();
+
+    // index <-> roomId conversion tables
+    private readonly List<string> indexToRoomId = new();
+    private readonly Dictionary<string, int> roomIdToIndex = new();
+
+    // Fixed positions (row 0 = top)
     private readonly Vector2Int startPos = new Vector2Int(2, 1);    // bottom middle
     private readonly Vector2Int ballroomPos = new Vector2Int(0, 2); // top right
 
-    [Header("Debug")]
-    public bool debugLogs = true;
-    public bool logDoorMap = false;
+    // Optional override if you don't want to reference RoomLoader for current room
+    private string currentRoomIdOverride = "";
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         InitializeNewRun();
-        DebugPrintGrid("After InitializeNewRun()");
-        DebugPrintAllDoorMap();
-        DebugPrintDoorMapForRoom(startRoomId);
 
+        if (debugPrintOnStart)
+        {
+            DebugPrintGrid("[MansionRouter] After InitializeNewRun()");
+            DebugPrintDoorRoutesFrom(startRoomId);
+        }
     }
 
+    /// <summary>
+    /// Doors call this to figure out where they lead.
+    /// </summary>
     public string GetDestinationRoomId(string currentRoomId, Direction exitDirection)
     {
         var key = (currentRoomId, exitDirection);
 
-        if (!doorMap.TryGetValue(key, out var dest))
+        if (!doorMap.TryGetValue(key, out var dest) || string.IsNullOrEmpty(dest))
         {
             Debug.LogWarning($"[MansionRouter] No mapping for {currentRoomId} {exitDirection}. Falling back to {startRoomId}.");
-            dest = startRoomId;
+            return startRoomId;
         }
-
-        if (debugLogs)
-            Debug.Log($"[MansionRouter] Route: {currentRoomId} exit {exitDirection} -> {dest}");
 
         return dest;
     }
 
+    /// <summary>
+    /// Call this when a key is collected. Rebuilds the layout while keeping anchors + current room fixed.
+    /// </summary>
     public void Reshuffle()
     {
         Debug.Log("[MansionRouter] Reshuffling mansion layout...");
-        ShuffleMovableRooms();
+
+        // Anchor rooms that are fully lit (torch rule)
+        UpdateAnchorsFromTorches();
+
+        // Current room should NOT move during this reshuffle
+        string currentRoomId = GetCurrentRoomIdSafe();
+
+        ShuffleMovableRooms(currentRoomId);
         RebuildDoorMapFromGrid();
 
-        DebugPrintGrid("After Reshuffle()");
-        DebugPrintAllDoorMap();
-        DebugPrintDoorMapForRoom(startRoomId);
+        if (debugPrintOnReshuffle)
+        {
+            DebugPrintGrid($"[MansionRouter] After Reshuffle() (current='{currentRoomId}')");
+            if (!string.IsNullOrEmpty(currentRoomId))
+                DebugPrintDoorRoutesFrom(currentRoomId);
+        }
     }
 
+    /// <summary>
+    /// Permanently anchor/unanchor a room (it will never move while anchored).
+    /// </summary>
     public void SetRoomAnchored(string roomId, bool anchored)
     {
+        if (string.IsNullOrWhiteSpace(roomId)) return;
+
         if (anchored) anchoredRooms.Add(roomId);
         else anchoredRooms.Remove(roomId);
     }
 
+    /// <summary>
+    /// Useful if you want to force the "current room" from another script instead of using RoomLoader.
+    /// </summary>
+    public void SetCurrentRoomOverride(string roomIdOrEmpty)
+    {
+        currentRoomIdOverride = roomIdOrEmpty ?? "";
+    }
+
+    /// <summary>
+    /// Full reset for player death etc.
+    /// </summary>
     public void ResetMansion()
     {
         anchoredRooms.Clear();
+        currentRoomIdOverride = "";
         InitializeNewRun();
+
+        if (debugPrintOnStart)
+            DebugPrintGrid("[MansionRouter] After ResetMansion()");
     }
 
     public bool TryGetRoomPosition(string roomId, out Vector2Int pos) =>
         roomPositions.TryGetValue(roomId, out pos);
+
+    // -------------------------
+    // Core initialization
+    // -------------------------
 
     private void InitializeNewRun()
     {
@@ -87,19 +151,24 @@ public class MansionRouter : MonoBehaviour
         PlaceRoomAt(startRoomId, startPos.x, startPos.y);
         PlaceRoomAt(ballroomRoomId, ballroomPos.x, ballroomPos.y);
 
-        // Place stable rooms first (if any)
+        // Place stable rooms (optional) into first empty cells
         foreach (var stable in stableRooms)
         {
             if (string.IsNullOrWhiteSpace(stable)) continue;
+            if (stable == startRoomId || stable == ballroomRoomId) continue;
             PlaceRoomInFirstEmptyCell(stable);
         }
 
-        // Place randomized rooms into remaining empty cells
+        // Place random rooms into remaining empty cells (shuffled order)
         var rooms = new List<string>(randomizeRooms);
         ShuffleList(rooms);
 
         foreach (var r in rooms)
+        {
+            if (string.IsNullOrWhiteSpace(r)) continue;
+            if (r == startRoomId || r == ballroomRoomId) continue;
             PlaceRoomInFirstEmptyCell(r);
+        }
 
         RebuildDoorMapFromGrid();
     }
@@ -109,7 +178,6 @@ public class MansionRouter : MonoBehaviour
         indexToRoomId.Clear();
         roomIdToIndex.Clear();
 
-        // Ensure start + ballroom exist even if arrays change
         AddRoomIdIfMissing(startRoomId);
         AddRoomIdIfMissing(ballroomRoomId);
 
@@ -171,39 +239,83 @@ public class MansionRouter : MonoBehaviour
         return indexToRoomId[idx];
     }
 
-    private void ShuffleMovableRooms()
+    // -------------------------
+    // Anchoring logic
+    // -------------------------
+
+    /// <summary>
+    /// If a room has all torches lit (>= maxTorchesPerRoom), anchor it permanently.
+    /// Reads states from RoomLoader.
+    /// </summary>
+    private void UpdateAnchorsFromTorches()
     {
-        // Fixed room IDs = start + ballroom + stable + anchored
+        if (roomLoader == null) return;
+
+        // We only know about rooms that exist on the grid right now
+        RebuildRoomPositionsFromGrid();
+
+        foreach (var kvp in roomPositions)
+        {
+            string roomId = kvp.Key;
+            if (string.IsNullOrEmpty(roomId)) continue;
+
+            // Start/Ballroom are effectively fixed anyway
+            if (roomId == startRoomId || roomId == ballroomRoomId) continue;
+
+            RoomState state = roomLoader.GetRoomState(roomId);
+            if (state != null && state.litTorches != null && state.litTorches.Count >= maxTorchesPerRoom)
+            {
+                anchoredRooms.Add(roomId);
+            }
+        }
+    }
+
+    // -------------------------
+    // Shuffle logic (keep fixed/anchored/current)
+    // -------------------------
+
+    private void ShuffleMovableRooms(string currentRoomId)
+    {
+        // Fixed room IDs = start + ballroom + stable + anchored (+ current room for this reshuffle)
         var fixedIds = new HashSet<string>(anchoredRooms);
+
         fixedIds.Add(startRoomId);
         fixedIds.Add(ballroomRoomId);
-        foreach (var s in stableRooms) if (!string.IsNullOrWhiteSpace(s)) fixedIds.Add(s);
 
-        // Collect fixed cells & movable cells
+        if (!string.IsNullOrWhiteSpace(currentRoomId))
+            fixedIds.Add(currentRoomId);
+
+        foreach (var s in stableRooms)
+            if (!string.IsNullOrWhiteSpace(s)) fixedIds.Add(s);
+
+        // Find fixed cells + movable rooms
         var fixedCells = new HashSet<Vector2Int>();
-        roomPositions.Clear(); // we will rebuild positions after moving
-
-        // First scan grid, record where fixed rooms currently are, and gather movable rooms/cells
         var movableRooms = new List<string>();
-        var movableCells = new List<Vector2Int>();
 
-        for (int row = 0; row < gameMap.GetLength(0); row++)
+        int rows = gameMap.GetLength(0);
+        int cols = gameMap.GetLength(1);
+
+        for (int row = 0; row < rows; row++)
         {
-            for (int col = 0; col < gameMap.GetLength(1); col++)
+            for (int col = 0; col < cols; col++)
             {
                 var id = RoomIdAt(row, col);
                 if (id == null) continue;
 
+                var cell = new Vector2Int(row, col);
+
                 if (fixedIds.Contains(id))
-                    fixedCells.Add(new Vector2Int(row, col));
+                    fixedCells.Add(cell);
                 else
                     movableRooms.Add(id);
             }
         }
 
-        for (int row = 0; row < gameMap.GetLength(0); row++)
+        // Collect movable cells = every cell that's not a fixed cell
+        var movableCells = new List<Vector2Int>();
+        for (int row = 0; row < rows; row++)
         {
-            for (int col = 0; col < gameMap.GetLength(1); col++)
+            for (int col = 0; col < cols; col++)
             {
                 var cell = new Vector2Int(row, col);
                 if (!fixedCells.Contains(cell))
@@ -211,24 +323,26 @@ public class MansionRouter : MonoBehaviour
             }
         }
 
-        // Clear all non-fixed cells
+        // Clear movable cells
         foreach (var cell in movableCells)
             gameMap[cell.x, cell.y] = -1;
 
-        // Shuffle movable rooms and re-place them
+        // Shuffle movable rooms and put them back
         ShuffleList(movableRooms);
 
         int count = Mathf.Min(movableRooms.Count, movableCells.Count);
         for (int i = 0; i < count; i++)
-            PlaceRoomAt(movableRooms[i], movableCells[i].x, movableCells[i].y);
+        {
+            var roomId = movableRooms[i];
+            var cell = movableCells[i];
+            PlaceRoomAt(roomId, cell.x, cell.y);
+        }
 
-        // Re-place fixed room positions (scan grid to find them OR place them deterministically)
-        // We place deterministically to guarantee Start/Ballroom stay in their designed spots:
+        // Enforce Start/Ballroom are exactly where you designed them
         PlaceRoomAt(startRoomId, startPos.x, startPos.y);
         PlaceRoomAt(ballroomRoomId, ballroomPos.x, ballroomPos.y);
 
-        // Stable rooms: if you want them fixed to their original cell, you can store their cell.
-        // For now we simply ensure they exist somewhere (if missing due to grid clear), place them:
+        // Ensure stable rooms exist somewhere (if they got lost due to setup changes)
         foreach (var s in stableRooms)
         {
             if (string.IsNullOrWhiteSpace(s)) continue;
@@ -236,8 +350,6 @@ public class MansionRouter : MonoBehaviour
                 PlaceRoomInFirstEmptyCell(s);
         }
 
-        // Anchored rooms: ensure they still exist (they should, since we treated them as fixedIds)
-        // Rebuild roomPositions for any fixed room already on the grid:
         RebuildRoomPositionsFromGrid();
     }
 
@@ -254,6 +366,10 @@ public class MansionRouter : MonoBehaviour
             }
         }
     }
+
+    // -------------------------
+    // Door map building
+    // -------------------------
 
     private void RebuildDoorMapFromGrid()
     {
@@ -300,6 +416,55 @@ public class MansionRouter : MonoBehaviour
         };
     }
 
+    // -------------------------
+    // Current room detection
+    // -------------------------
+
+    private string GetCurrentRoomIdSafe()
+    {
+        if (!string.IsNullOrEmpty(currentRoomIdOverride))
+            return currentRoomIdOverride;
+
+        if (roomLoader != null)
+            return roomLoader.GetCurrentRoomId();
+
+        return "";
+    }
+
+    // -------------------------
+    // Debug helpers
+    // -------------------------
+
+    private void DebugPrintGrid(string header)
+    {
+        Debug.Log(header);
+        Debug.Log("Grid (row 0 = top):");
+
+        int rows = gameMap.GetLength(0);
+        int cols = gameMap.GetLength(1);
+
+        for (int row = 0; row < rows; row++)
+        {
+            string line = "| ";
+            for (int col = 0; col < cols; col++)
+            {
+                var id = RoomIdAt(row, col);
+                line += (id ?? "EMPTY") + " | ";
+            }
+            Debug.Log(line);
+        }
+    }
+
+    private void DebugPrintDoorRoutesFrom(string roomId)
+    {
+        Debug.Log($"[MansionRouter] Door routes from '{roomId}':");
+        foreach (Direction dir in Enum.GetValues(typeof(Direction)))
+        {
+            string dest = GetDestinationRoomId(roomId, dir);
+            Debug.Log($"  {dir} -> {dest}");
+        }
+    }
+
     private void ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -308,78 +473,7 @@ public class MansionRouter : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
-
-
-
-
-    private void DebugPrintGrid(string label)
-    {
-        if (!debugLogs) return;
-
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"[MansionRouter] {label}");
-        sb.AppendLine("Grid (row 0 = top):");
-
-        int rows = gameMap.GetLength(0);
-        int cols = gameMap.GetLength(1);
-
-        for (int r = 0; r < rows; r++)
-        {
-            sb.Append("| ");
-            for (int c = 0; c < cols; c++)
-            {
-                string id = RoomIdAt(r, c);
-                sb.Append(string.IsNullOrEmpty(id) ? "----" : id);
-                sb.Append(" | ");
-            }
-            sb.AppendLine();
-        }
-
-        Debug.Log(sb.ToString());
-    }
-
-    private void DebugPrintDoorMapForRoom(string roomId)
-    {
-        if (!debugLogs) return;
-
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"[MansionRouter] Door routes from '{roomId}':");
-
-        foreach (Direction dir in System.Enum.GetValues(typeof(Direction)))
-        {
-            var key = (roomId, dir);
-            if (doorMap.TryGetValue(key, out var dest))
-                sb.AppendLine($"  {dir} -> {dest}");
-            else
-                sb.AppendLine($"  {dir} -> (missing)");
-        }
-
-        Debug.Log(sb.ToString());
-    }
-
-    private void DebugPrintAllDoorMap()
-    {
-        if (!debugLogs || !logDoorMap) return;
-
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine("[MansionRouter] Full doorMap:");
-
-        foreach (var kvp in doorMap)
-            sb.AppendLine($"  ({kvp.Key.Item1}, {kvp.Key.Item2}) -> {kvp.Value}");
-
-        Debug.Log(sb.ToString());
-    }
-
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-            Reshuffle();
-
-        if (Input.GetKeyDown(KeyCode.T))
-            ResetMansion();
-    }
-
 }
+
 
 
