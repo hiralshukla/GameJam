@@ -8,7 +8,7 @@ Theme: EXPLORING
 
 ## Tech
 - Game engine: Unity
-- Language: TBD
+- Language: C#
 
 ## Organization
 - We use GitHub Issues + a Kanban board to track work.
