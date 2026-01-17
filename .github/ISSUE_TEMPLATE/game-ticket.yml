@@ -1,0 +1,52 @@
+name: Game Dev Ticket
+description: Create a clear, actionable task for the game
+title: "[TICKET]: "
+labels: ["task"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Game Dev Ticket
+        Use this ticket to track work during Days 2–3 of development.
+
+  - type: input
+    id: feature
+    attributes:
+      label: Feature / Task Name
+      description: What are you working on?
+      placeholder: "Example: Player movement, Main menu, Enemy AI"
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be completed when this ticket is done?
+      placeholder: "Example: Player can move with WASD and animations play correctly."
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: To-Do Checklist
+      options:
+        - label: Design / plan the feature
+        - label: Implement basic version
+        - label: Test in-game
+        - label: Fix bugs
+        - label: Polish (UI, animations, feel)
+        - label: Mark as complete
+
+  - type: dropdown
+    id: day
+    attributes:
+      label: Development Day
+      options:
+        - Day 1 (Planning)
+        - Day 2 (Coding)
+        - Day 3 (Coding + Polish)
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / Details
+      description: Any extra context, links, or ideas
