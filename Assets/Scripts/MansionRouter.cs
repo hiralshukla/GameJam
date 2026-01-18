@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MansionRouter : MonoBehaviour
+public class MansionRouter : MonoBehaviour, IDestinationProvider
 {
+
     [Header("Special Rooms")]
     public string startRoomId = "Start";
     public string ballroomRoomId = "Ballroom";
@@ -262,11 +263,11 @@ public class MansionRouter : MonoBehaviour
             // Start/Ballroom are effectively fixed anyway
             if (roomId == startRoomId || roomId == ballroomRoomId) continue;
 
-            RoomState state = roomLoader.GetRoomState(roomId);
-            if (state != null && state.litTorches != null && state.litTorches.Count >= maxTorchesPerRoom)
-            {
-                anchoredRooms.Add(roomId);
-            }
+            // RoomState state = roomLoader.GetRoomState(roomId);
+            // if (state != null && state.litTorches != null && state.litTorches.Count >= maxTorchesPerRoom)
+            // {
+            //     anchoredRooms.Add(roomId);
+            // }
         }
     }
 

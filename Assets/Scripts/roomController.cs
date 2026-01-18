@@ -32,31 +32,36 @@ public class roomController : MonoBehaviour
         };
     }
 
-        // Called by RoomLoader after instantiation
-    public void ApplyState(RoomState state)
-    {
-        // Later: light torches, disable collected key chest, etc.
-        // For now: just a placeholder
-        // Debug.Log($"Applying state for {roomId}: keyCollected={state.keyCollected}");
-    }
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-}
-
-[System.Serializable]
-public class RoomState
+    void Awake()
 {
-    public bool keyCollected;
-    public bool anchored;
-    public HashSet<int> litTorches = new HashSet<int>();
+    var loader = FindFirstObjectByType<RoomLoader>();
+    var router = FindFirstObjectByType<MansionRouter>(); // or DebugDestinationProvider for now
+
+    foreach (var door in GetComponentsInChildren<Door>(true))
+    {
+        door.room = this;
+        door.loader = loader;
+        door.destinationProviderComponent = router;
+    }
+
+    if (enterFromN == null || enterFromE == null || enterFromS == null || enterFromW == null)
+        Debug.LogWarning($"[roomController] Missing entry spawn points in room '{roomId}' on '{gameObject.name}'.");
+
+        // Called by RoomLoader after instantiation
+    // public void ApplyState(RoomState state)
+    // {
+    //     // Later: light torches, disable collected key chest, etc.
+    //     // For now: just a placeholder
+    //     // Debug.Log($"Applying state for {roomId}: keyCollected={state.keyCollected}");
+    // }
+
 }
+}
+
+// [System.Serializable]
+// public class RoomState
+// {
+//     public bool keyCollected;
+//     public bool anchored;
+//     public HashSet<int> litTorches = new HashSet<int>();
+// }
