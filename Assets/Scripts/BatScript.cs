@@ -41,4 +41,25 @@ public class BatScript : MonoBehaviour
             rb.linearVelocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed; 
         }
     }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            PlayerHealth ph = collision.collider.GetComponent<PlayerHealth>();
+            if (ph != null)
+            {
+                ph.TakeDamage(1);
+            }
+        }
+    }
+
 }

@@ -1,40 +1,46 @@
-using UnityEngine;
+//using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
-{
-    public int maxHealth = 10;
-    private int currentHealth;
-    public RedHealthBarScript healthBar;
+//public class PlayerHealth : MonoBehaviour
+//{
 
-    void Start()
-    {
-        currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
-    }
+//    public int maxHealth = 10;
+//    private int currentHealth;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        BatScript enemy = collision.GetComponent<BatScript>();
-        if (enemy)
-        {
-            TakeDamage();
-        }
-    }
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-        currentHealth = Mathf.Max(0, currentHealth);
-        healthBar.SetHealth(currentHealth);
+//    public int maxHealth = 100;
+//    public int currentHealth;
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
+//    public RedHealthBarScript healthBar;
 
-    void Die()
-    {
-        Debug.Log("Player died!");
-        // Handle death logic here (respawn, restart, game over, etc.)
-    }
-}
+//    void Start()
+//    {
+//        currentHealth = maxHealth;
+//        healthBar.SetMaxHealth(maxHealth);
+//    }
+
+//    private void OnTriggerEnter2D(Collider2D collision)
+//    {
+//        BatScript enemy = collision.GetComponent<BatScript>();
+//        if (enemy)
+//        {
+//            TakeDamage();
+//        }
+//    }
+
+//    public void TakeDamage(int amount)
+//    {
+//        currentHealth -= amount;
+//        currentHealth = Mathf.Max(0, currentHealth);
+//        healthBar.SetHealth(currentHealth);
+
+//        if (currentHealth <= 0)
+//        {
+//            Die();
+//        }
+//    }
+
+//    void Die()
+//    {
+//        Debug.Log("Player died!");
+//        // Handle death logic here (respawn, restart, game over, etc.)
+//    }
+//}
