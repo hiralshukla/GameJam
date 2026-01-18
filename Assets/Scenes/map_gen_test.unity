@@ -811,6 +811,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 289290248}
   m_CullTransparentMesh: 1
+--- !u!1 &465333086 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1757453279150542161, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+  m_PrefabInstance: {fileID: 762376190}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &465333090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 465333086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a35ba7c8e99f8c142bc8fe6d12ff96bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TorchLight
+  lightOn: 0
+  player: {fileID: 1596944307}
+  interactDistance: 3
 --- !u!1 &523001506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,6 +1196,18 @@ PrefabInstance:
       propertyPath: enterFromW
       value: 
       objectReference: {fileID: 1373170706}
+    - target: {fileID: 8122337835664202717, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1596944307}
+    - target: {fileID: 8122337835664202717, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      propertyPath: lightOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8122337835664202717, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8185341305990768252, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
       propertyPath: m_Name
       value: roomRoot
@@ -1183,7 +1215,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8740547456060574452, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1847083544}
+    - targetCorrespondingSourceObject: {fileID: 3695859942813280364, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1707041902}
+    - targetCorrespondingSourceObject: {fileID: 1757453279150542161, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 465333090}
   m_SourcePrefab: {fileID: 100100000, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
 --- !u!4 &883513099 stripped
 Transform:
@@ -2713,6 +2754,26 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &1707041898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3695859942813280364, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+  m_PrefabInstance: {fileID: 762376190}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1707041902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707041898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a35ba7c8e99f8c142bc8fe6d12ff96bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TorchLight
+  lightOn: 0
+  player: {fileID: 1596944307}
+  interactDistance: 3
 --- !u!1 &1733737375
 GameObject:
   m_ObjectHideFlags: 0
@@ -3002,6 +3063,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830785742}
   m_CullTransparentMesh: 1
+--- !u!1 &1847083540 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8740547456060574452, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
+  m_PrefabInstance: {fileID: 762376190}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1847083544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847083540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a35ba7c8e99f8c142bc8fe6d12ff96bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TorchLight
+  lightOn: 0
+  player: {fileID: 1596944307}
+  interactDistance: 3
 --- !u!4 &1886473667 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1809729161160790416, guid: c09a457bbc37fa24186d3bd22b8e1058, type: 3}
