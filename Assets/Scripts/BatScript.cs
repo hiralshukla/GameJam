@@ -10,6 +10,8 @@ public class BatScript : MonoBehaviour
 
     float health, maxHealth = 3f;
 
+    public int damage = 1;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
