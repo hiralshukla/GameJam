@@ -8,6 +8,7 @@ public class itemSlot : MonoBehaviour
     public int quantity;
     public Sprite itemSprite;
     public bool isFull;
+    public Sprite emptySprite;
 
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private Image itemImage;
@@ -23,6 +24,21 @@ public class itemSlot : MonoBehaviour
         itemNameText.enabled = true;
         itemImage.sprite = sprite;
     }
+
+    public void UpdateSlotUI()
+    {
+        itemNameText.text = itemName;
+        itemImage.sprite = itemSprite;
+    }
+
+    public void ClearSlot()
+    {
+        itemNameText.text = "";
+        itemImage.sprite = emptySprite;
+        itemNameText.enabled = false;
+    }
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
