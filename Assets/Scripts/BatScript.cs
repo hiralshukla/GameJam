@@ -8,6 +8,10 @@ public class BatScript : MonoBehaviour
     Transform target;
     Vector2 moveDirection;
 
+    float health, maxHealth = 3f;
+
+    public int damage = 1;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,6 +22,7 @@ public class BatScript : MonoBehaviour
     void Start()
     {
         target = GameObject.Find("Player").transform;
+        health = maxHealth;
     }
 
     // Update is called once per frame
@@ -42,24 +47,12 @@ public class BatScript : MonoBehaviour
         }
     }
 
-    // public void TakeDamage(float damage)
-    // {
-    //     health -= damage;
-    //     if (health <= 0)
-    //     {
-    //         Destroy(gameObject);
-    //     }
-    // }
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void TakeDamage(float damage)
     {
-        if (collision.collider.CompareTag("Player"))
+        health -= damage;
+        if (health <= 0)
         {
-            PlayerHealth ph = collision.collider.GetComponent<PlayerHealth>();
-            if (ph != null)
-            {
-                ph.TakeDamage(1);
-            }
+            Destroy(gameObject);
         }
     }
-
 }

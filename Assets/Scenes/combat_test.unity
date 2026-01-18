@@ -271,6 +271,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 175387475412824632, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3227278178591136907, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
       propertyPath: m_Material
       value: 
@@ -1769,6 +1773,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 175387475412824632, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3227278178591136907, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
       propertyPath: m_Material
       value: 
@@ -2562,8 +2570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43d2621b5989b4d82c9e36e9e854cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 0
-  slider: {fileID: 0}
+  slider: {fileID: 931848609}
 --- !u!114 &931848609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2734,6 +2741,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 175387475412824632, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3227278178591136907, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
       propertyPath: m_Material
       value: 
@@ -3456,7 +3467,7 @@ GameObject:
   - component: {fileID: 1596944313}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3678,8 +3689,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 10
-  currentHealth: 10
   healthBar: {fileID: 931848608}
+  animator: {fileID: 1596944310}
 --- !u!1 &1628391484
 GameObject:
   m_ObjectHideFlags: 0
@@ -4175,6 +4186,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 175387475412824632, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3227278178591136907, guid: 24634dd3406b7924992f3c9e165225d4, type: 3}
       propertyPath: m_Material
       value: 
