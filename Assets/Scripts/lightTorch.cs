@@ -1,64 +1,75 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Collider2D))]
 public class TorchLight : MonoBehaviour
 {
+    [Header("State")]
     public bool lightOn = false;
+
+    [Header("Sprites")]
+    public Sprite onSprite;
+    public Sprite offSprite;
+
+    [Header("Interaction")]
     public Transform player;
     public float interactDistance = 3f;
 
     private Camera mainCam;
+    private SpriteRenderer sr;
 
-    void Start()
+    void Awake()
     {
+        sr = GetComponent<SpriteRenderer>();
         mainCam = Camera.main;
 
-        // Force off for testing (optional)
-        lightOn = false;
+        if (sr == null)
+            Debug.LogError("[TorchLight] Missing SpriteRenderer on the torch object.");
 
         if (mainCam == null)
             Debug.LogError("[TorchLight] Camera.main is NULL. Tag your camera as MainCamera.");
+
+        ApplyVisual();
     }
 
     void Update()
     {
-        if (lightOn) return;
-        if (mainCam == null) return;
+        if (mainCam == null || sr == null) return;
+        if (Mouse.current == null) return;
 
-        if (Input.GetMouseButtonDown(0))
+        // Left click
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Vector2 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
-
-            // OverlapPoint is often simpler than raycast for clicking 2D objects
+            Vector2 mouseWorld = mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Collider2D hit = Physics2D.OverlapPoint(mouseWorld);
 
-            if (hit == null)
-            {
-                Debug.Log("[TorchLight] Clicked, but hit NOTHING.");
-                return;
-            }
+            if (hit == null) return;
 
-            Debug.Log($"[TorchLight] Clicked hit: {hit.gameObject.name}");
-
-            // Accept clicks on this object OR its children
+            // Click must hit this torch (or a child)
             if (hit.transform == transform || hit.transform.IsChildOf(transform))
             {
                 if (player != null && Vector2.Distance(player.position, transform.position) > interactDistance)
-                {
-                    Debug.Log("[TorchLight] Too far to interact.");
                     return;
-                }
 
-                TurnOn();
+                Toggle();
             }
         }
     }
 
-    private void TurnOn()
+    public void Toggle()
     {
-        lightOn = true;
-        Debug.Log($"[TorchLight] Torch turned ON (bool set true): {gameObject.name}");
+        lightOn = !lightOn;
+        ApplyVisual();
+        Debug.Log($"[TorchLight] {gameObject.name} toggled. Now On={lightOn}");
+    }
+
+    private void ApplyVisual()
+    {
+        if (sr == null) return;
+
+        if (lightOn && onSprite != null)
+            sr.sprite = onSprite;
+        else if (!lightOn && offSprite != null)
+            sr.sprite = offSprite;
     }
 }
-
-
-
