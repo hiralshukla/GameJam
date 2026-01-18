@@ -19,6 +19,8 @@ public class roomController : MonoBehaviour
     public GameObject torchesRoot;
     public GameObject chestsRoot;
 
+    public GameObject keyItemPrefab;
+
     // You can expand later to store torch/chest components, etc.
     public Transform GetEntryPoint(Direction enteredFrom)
     {
@@ -34,6 +36,12 @@ public class roomController : MonoBehaviour
 
     void Awake()
 {
+        // Wire chests to this room
+    foreach (var chest in GetComponentsInChildren<Chest>(true))
+    {
+        chest.room = this;
+    }
+
     var loader = FindFirstObjectByType<RoomLoader>();
     var router = FindFirstObjectByType<MansionRouter>(); // or DebugDestinationProvider for now
 
@@ -47,21 +55,5 @@ public class roomController : MonoBehaviour
     if (enterFromN == null || enterFromE == null || enterFromS == null || enterFromW == null)
         Debug.LogWarning($"[roomController] Missing entry spawn points in room '{roomId}' on '{gameObject.name}'.");
 
-        // Called by RoomLoader after instantiation
-    // public void ApplyState(RoomState state)
-    // {
-    //     // Later: light torches, disable collected key chest, etc.
-    //     // For now: just a placeholder
-    //     // Debug.Log($"Applying state for {roomId}: keyCollected={state.keyCollected}");
-    // }
-
 }
 }
-
-// [System.Serializable]
-// public class RoomState
-// {
-//     public bool keyCollected;
-//     public bool anchored;
-//     public HashSet<int> litTorches = new HashSet<int>();
-// }
