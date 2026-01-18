@@ -1054,7 +1054,6 @@ GameObject:
   - component: {fileID: 727662605}
   - component: {fileID: 727662604}
   - component: {fileID: 727662606}
-  - component: {fileID: 727662607}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1116,22 +1115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dffc53657515e64aa572ea23395106d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugRoomSwap
-  loader: {fileID: 0}
---- !u!114 &727662607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727662603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09d74ba4dbc03c94da6d43ef2fd877af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomLoader
-  player: {fileID: 1596944307}
-  roomPrefabs:
-  - {fileID: 1477156952}
+  loader: {fileID: 1870198071}
 --- !u!1001 &762376190
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2270,7 +2254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -832, y: 474}
+  m_AnchoredPosition: {x: -310, y: 142}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1355870534
@@ -3387,3 +3371,4 @@ SceneRoots:
   - {fileID: 983647022}
   - {fileID: 727662605}
   - {fileID: 762376190}
+  - {fileID: 1870198072}
