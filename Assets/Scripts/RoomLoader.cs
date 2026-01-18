@@ -3,24 +3,38 @@ using UnityEngine;
 
 public class RoomLoader : MonoBehaviour
 {
-
     [Header("Player")]
     public Transform player;
 
-    [Header("Room Prefabs")]
-    public List<roomController> roomPrefabs; // drag prefabs here
+    [Header("Room Prefabs (drag prefab GameObjects here)")]
+    public List<GameObject> roomPrefabs; // drag prefabs here
 
-    private readonly Dictionary<string, roomController> _prefabById = new();
-    private readonly Dictionary<string, RoomState> _stateByRoomId = new();
+    private readonly Dictionary<string, GameObject> _prefabById = new();
+//    private readonly Dictionary<string, RoomState> _stateByRoomId = new();
 
     private roomController _currentRoom;
 
     void Awake()
     {
-        foreach (var rp in roomPrefabs)
+        // Build lookup: roomId -> prefab GameObject
+        foreach (var prefab in roomPrefabs)
         {
-            if (rp == null) continue;
-            _prefabById[rp.roomId] = rp;
+            if (prefab == null) continue;
+
+            var rc = prefab.GetComponent<roomController>();
+            if (rc == null)
+            {
+                Debug.LogError($"Room prefab '{prefab.name}' is missing roomController on the ROOT object.");
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(rc.roomId))
+            {
+                Debug.LogError($"Room prefab '{prefab.name}' has an empty roomId on roomController.");
+                continue;
+            }
+
+            _prefabById[rc.roomId] = prefab;
         }
     }
 
@@ -30,54 +44,49 @@ public class RoomLoader : MonoBehaviour
         if (_currentRoom != null)
             Destroy(_currentRoom.gameObject);
 
-        // Spawn new room
+        // Find prefab
         if (!_prefabById.TryGetValue(roomId, out var prefab))
         {
-            Debug.LogError($"No room prefab registered for roomId '{roomId}'");
+            Debug.LogError($"No room prefab registered for roomId '{roomId}'. Add it to RoomLoader.roomPrefabs.");
             return;
         }
 
-        _currentRoom = Instantiate(prefab);
+        // Spawn new room
+        GameObject instance = Instantiate(prefab);
+        _currentRoom = instance.GetComponent<roomController>();
+
+        if (_currentRoom == null)
+        {
+            Debug.LogError($"Spawned room '{prefab.name}' but it has no roomController on the root.");
+            Destroy(instance);
+            return;
+        }
+    }
 
         // Ensure state exists
-        if (!_stateByRoomId.TryGetValue(roomId, out var state))
-        {
-            state = new RoomState();
-            _stateByRoomId[roomId] = state;
-        }
+    //     if (!_stateByRoomId.TryGetValue(roomId, out var state))
+    //     {
+    //         state = new RoomState();
+    //         _stateByRoomId[roomId] = state;
+    //     }
 
-        _currentRoom.ApplyState(state);
+    //     _currentRoom.ApplyState(state);
 
-        // Place player
-        var spawn = _currentRoom.GetEntryPoint(enteredFrom);
-        if (spawn != null && player != null)
-        {
-            player.position = spawn.position;
-        }
-    }
+    //     // Place player
+    //     var spawn = _currentRoom.GetEntryPoint(enteredFrom);
+    //     if (spawn != null && player != null)
+    //         player.position = spawn.position;
+    // }
 
-    // Useful later for key pickup / torch events
-    public RoomState GetRoomState(string roomId)
-    {
-        if (!_stateByRoomId.TryGetValue(roomId, out var state))
-        {
-            state = new RoomState();
-            _stateByRoomId[roomId] = state;
-        }
-        return state;
-    }
+    // public RoomState GetRoomState(string roomId)
+    // {
+    //     if (!_stateByRoomId.TryGetValue(roomId, out var state))
+    //     {
+    //         state = new RoomState();
+    //         _stateByRoomId[roomId] = state;
+    //     }
+    //     return state;
+    // }
 
     public string GetCurrentRoomId() => _currentRoom != null ? _currentRoom.roomId : "";
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4347870460852526520}
   - component: {fileID: 544781929179844588}
   - component: {fileID: 4153569183405483497}
+  - component: {fileID: 6018786897589024803}
   m_Layer: 0
   m_Name: a
   m_TagString: Untagged
@@ -122,7 +123,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -138,6 +139,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &6018786897589024803
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972039768689809984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c662968630d81ee4a9ddd5746c7dd27c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  exitDirection: 3
+  room: {fileID: 0}
+  loader: {fileID: 0}
+  destinationProviderComponent: {fileID: 0}
 --- !u!1 &2010323625040032327
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,6 +196,7 @@ GameObject:
   - component: {fileID: 4671626394720103781}
   - component: {fileID: 6873168855792430392}
   - component: {fileID: 2461524385078202036}
+  - component: {fileID: 1143045914371571090}
   m_Layer: 0
   m_Name: a (3)
   m_TagString: Untagged
@@ -291,7 +308,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -307,6 +324,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1143045914371571090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3531190609465399034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c662968630d81ee4a9ddd5746c7dd27c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  exitDirection: 2
+  room: {fileID: 0}
+  loader: {fileID: 0}
+  destinationProviderComponent: {fileID: 0}
 --- !u!1 &3595880513255752543
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,6 +351,7 @@ GameObject:
   - component: {fileID: 1948561927023389789}
   - component: {fileID: 2551744848874037346}
   - component: {fileID: 3885582537262284128}
+  - component: {fileID: 339449602086726925}
   m_Layer: 0
   m_Name: a (1)
   m_TagString: Untagged
@@ -429,7 +463,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -445,6 +479,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &339449602086726925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3595880513255752543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c662968630d81ee4a9ddd5746c7dd27c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  exitDirection: 1
+  room: {fileID: 0}
+  loader: {fileID: 0}
+  destinationProviderComponent: {fileID: 0}
 --- !u!1 &3823078278684222205
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,6 +607,7 @@ GameObject:
   - component: {fileID: 3687170061374325077}
   - component: {fileID: 8361057276650301388}
   - component: {fileID: 960069114863149889}
+  - component: {fileID: 7398161708656515557}
   m_Layer: 0
   m_Name: a (2)
   m_TagString: Untagged
@@ -668,7 +719,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -684,6 +735,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &7398161708656515557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6098114524707959444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c662968630d81ee4a9ddd5746c7dd27c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  exitDirection: 0
+  room: {fileID: 0}
+  loader: {fileID: 0}
+  destinationProviderComponent: {fileID: 0}
 --- !u!1 &8566568284533714300
 GameObject:
   m_ObjectHideFlags: 0

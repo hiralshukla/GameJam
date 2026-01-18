@@ -3,23 +3,26 @@ using UnityEngine.InputSystem;
 
 public class DebugRoomSwap : MonoBehaviour
 {
-    
-    public RoomLoader loader;
+     public RoomLoader loader;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Test Room Ids")]
+    public string room1 = "Start";
+    public string room2 = "TestA";
 
-    // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current == null) return;
+        if (Keyboard.current == null || loader == null) return;
 
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
-            loader.LoadRoom("Start", Direction.S);
+        {
+            Debug.Log($"[Debug] Loading {room1}");
+            loader.LoadRoom(room1, Direction.S);
+        }
 
-
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            Debug.Log($"[Debug] Loading {room2}");
+            loader.LoadRoom(room2, Direction.N);
+        }
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2058571926750242225}
   - component: {fileID: 2074851587835905210}
+  - component: {fileID: -2141147908883280670}
   m_Layer: 0
   m_Name: roomRoot
   m_TagString: Untagged
@@ -57,6 +58,18 @@ MonoBehaviour:
   doorsRoot: {fileID: 0}
   torchesRoot: {fileID: 0}
   chestsRoot: {fileID: 0}
+--- !u!114 &-2141147908883280670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8185341305990768252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6f8e5793545f6b4da24c32d64bb3ab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &1655050490049447352
 PrefabInstance:
   m_ObjectHideFlags: 0
