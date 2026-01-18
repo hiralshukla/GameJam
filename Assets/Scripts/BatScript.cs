@@ -42,14 +42,14 @@ public class BatScript : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage)
-    {
-        health -= damage;
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
-    }
+    // public void TakeDamage(float damage)
+    // {
+    //     health -= damage;
+    //     if (health <= 0)
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("Player"))
