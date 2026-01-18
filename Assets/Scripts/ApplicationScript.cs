@@ -10,6 +10,7 @@ public class ApplicationScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI keysText;
     [SerializeField] private GameObject inventoryMenu;
     public bool inventoryOpen;
+    public itemSlot[] itemSlot;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,6 +44,16 @@ public class ApplicationScript : MonoBehaviour
 
     public void AddItem(string itemName, int quantity, Sprite sprite)
     {
-        Debug.Log("item name = " + itemName + "quantity = " +  quantity + "itemSprite = " + sprite);
+       
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if (itemSlot[i].isFull == false)
+            {
+                itemSlot[i].AddItem(itemName, quantity, sprite);
+                numKeys++;
+                return;
+            }
+        }
+        UpdateKeyUI();
     }
 }
