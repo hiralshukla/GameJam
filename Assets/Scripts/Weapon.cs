@@ -6,10 +6,10 @@ public class Weapon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Enemy enemy = collision.GetComponent<EntityId>();
-        //if (enemy != null)
-        //{
-        //    enemy.TakeDamage(damage);
-        //}
+        BatScript enemy = collision.GetComponent<BatScript>();
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+        }
     }
 }

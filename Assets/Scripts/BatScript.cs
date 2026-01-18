@@ -8,6 +8,8 @@ public class BatScript : MonoBehaviour
     Transform target;
     Vector2 moveDirection;
 
+    float health, maxHealth = 3f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,6 +20,7 @@ public class BatScript : MonoBehaviour
     void Start()
     {
         target = GameObject.Find("Player").transform;
+        health = maxHealth;
     }
 
     // Update is called once per frame
@@ -39,6 +42,15 @@ public class BatScript : MonoBehaviour
         if (target)
         {
             rb.linearVelocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed; 
+        }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 }
