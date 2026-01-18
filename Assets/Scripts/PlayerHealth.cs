@@ -2,16 +2,27 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 100;
-    public int currentHealth;
+    public int maxHealth = 10;
+    private int currentHealth;
     public RedHealthBarScript healthBar;
+    Vector2 startPos;
+    public Animator animator;
 
     void Start()
     {
+        startPos = transform.position;
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        BatScript enemy = collision.GetComponent<BatScript>();
+        if (enemy)
+        {
+            TakeDamage(enemy.damage);
+        }
+    }
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
@@ -20,13 +31,21 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            animator.SetBool("isDead", true);
             Die();
         }
     }
 
     void Die()
     {
-        Debug.Log("Player died!");
-        // Handle death logic here (respawn, restart, game over, etc.)
+        Respawn();
+    }
+
+    void Respawn()
+    {
+        transform.position = startPos;
+        currentHealth = maxHealth;
+        healthBar.SetHealth(currentHealth);
+        animator.SetBool("isDead", false);
     }
 }

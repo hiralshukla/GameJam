@@ -3355,6 +3355,7 @@ MonoBehaviour:
   rigBody: {fileID: 1596944309}
   speed: 5
   animator: {fileID: 1596944310}
+  aim: {fileID: 0}
 --- !u!50 &1596944309
 Rigidbody2D:
   serializedVersion: 5
